@@ -4,7 +4,8 @@ let mainWindow;
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
-		width: 1200,
+		title: "Pomodoro",
+		width: 800,
 		height: 800,
 		webPreferences: {
 			nodeIntegration: false,
