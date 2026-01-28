@@ -1,114 +1,132 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import "./App.css";
-import begging from './assets/begging.jpg';
-import bored from './assets/bored.jpg';
-import home from './assets/home.jpg';
-import breakImg from './assets/breakImg.jpg';
-import breakSong from './assets/breakSong.mp3';
-import homeSong from './assets/homeSong.mp3';
-
-
+import idleGif from "./assets/idle.gif";
+import workGif from "./assets/work.gif";
+import breakGif from "./assets/break.gif";
+import closeBtn from "./assets/close.png";
 
 function App() {
   const WORK_TIME = 25 * 60;
+  const BREAK_TIME = 5 * 60;
 
   const [timeLeft, setTimeLeft] = useState<number>(WORK_TIME);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isBreak, setIsBreak] = useState<boolean>(false);
   const [text, setText] = useState("");
+  const [gifImage, setGifImage] = useState(idleGif);
+  const meowAudio = new Audio(meowSound);
 
   const cheerMessages = [
     "You can do it !",
-    "I beleive in you !",
-    "You're amazing !",
+    "I believe in you !",
     "Keep going !",
     "Stay Focused !",
   ];
-
   const breakMessages = [
     "Stay hydrated !",
     "Snacks, maybe?",
-    "Text me !",
-    "I love you >3",
-    "Strecth your body !",
+    "I love you <3",
+    "Stretch a bit !",
   ];
 
   useEffect(() => {
     if (!isRunning) {
-      setText("");
+      setText(isBreak ? "Ready for a break?" : "Ready to work?");
       return;
     }
-
     const messages = isBreak ? breakMessages : cheerMessages;
     let index = 0;
-
     setText(messages[index]);
-
     const interval = setInterval(() => {
       index = (index + 1) % messages.length;
       setText(messages[index]);
     }, 4000);
-
     return () => clearInterval(interval);
   }, [isRunning, isBreak]);
 
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;
-
-    const timer: ReturnType<typeof setInterval> = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
-  }, [isRunning]);
+  }, [isRunning, timeLeft]);
 
   const formatTime = (seconds: number): string => {
     const m = Math.floor(seconds / 60)
       .toString()
       .padStart(2, "0");
-
     const s = (seconds % 60).toString().padStart(2, "0");
-
     return `${m}:${s}`;
   };
 
   const switchMode = (breakMode: boolean) => {
     setIsBreak(breakMode);
     setIsRunning(false);
-    setTimeLeft(breakMode ? 5 * 60 : 25 * 60);
+    setTimeLeft(breakMode ? BREAK_TIME : WORK_TIME);
+    setGifImage(idleGif);
   };
 
-  const handleClick = () => {
-    setIsRunning((prev) => {
-      if (prev) setTimeLeft(isBreak ? 5 * 60 : 25 * 60);
-      return !prev;
-    });
+  const toggleTimer = () => {
+    if (!isRunning) {
+      setIsRunning(true);
+      setGifImage(isBreak ? breakGif : workGif);
+    } else {
+      setIsRunning(false);
+      setGifImage(idleGif);
+    }
+  };
+
+  const resetTimer = () => {
+    setIsRunning(false);
+    setTimeLeft(isBreak ? BREAK_TIME : WORK_TIME);
+    setGifImage(idleGif);
   };
 
   return (
-    <div className="relative">
-      <div>
-        <button className="closeButton">Close</button>
-      </div>
-      <div className="home-content">
-        <div className="home-controls">
-          <button className="image-button" onClick={() => switchMode(false)}>
-            Work
+    <div className="home-container drag-region">
+      <button
+        className="close-button no-drag"
+        onClick={() => (window as any).electronAPI?.closeApp()}
+      >
+        <img src={closeBtn} alt="close" />
+      </button>
+
+      <div className="glass-card no-drag">
+        <div className="mode-switcher">
+          <button
+            className={`mode-btn ${!isBreak ? "active" : ""}`}
+            onClick={() => switchMode(false)}
+          >
+            WORK
           </button>
-          <button className="image-button" onClick={() => switchMode(true)}>
-            Break
+          <button
+            className={`mode-btn ${isBreak ? "active" : ""}`}
+            onClick={() => switchMode(true)}
+          >
+            BREAK
           </button>
         </div>
 
-        <p className={`encouragement-text ${!isRunning ? "hidden" : ""}`}>
-          {text}
-        </p>
+        <div className="status-area">
+          <p className="encouragement-text">{text}</p>
+          <h1 className="timer-display">{formatTime(timeLeft)}</h1>
+        </div>
 
-        <h1 className="home-Timer">{formatTime(timeLeft)}</h1>
+        <div className="gif-container">
+          <img src={gifImage} alt="status" className="main-gif" />
+        </div>
 
-        <button className="home-button" onClick={handleClick}>
-          {isRunning ? "Stop" : "Start"}
-        </button>
+        <div className="controls-footer">
+          <button className="primary-btn" onClick={toggleTimer}>
+            {isRunning ? "PAUSE" : "START"}
+          </button>
+          <button
+            className="secondary-btn hover:border-white"
+            onClick={resetTimer}
+          >
+            RESET
+          </button>
+        </div>
       </div>
     </div>
   );
