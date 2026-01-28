@@ -16,6 +16,14 @@ body {
   overflow: hidden;
 }
 
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
 .home-container {
   width: 600px;
   height: 600px;
