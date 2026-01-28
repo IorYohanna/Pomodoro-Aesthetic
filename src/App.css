@@ -27,7 +27,7 @@ body {
 .home-container {
   width: 600px;
   height: 600px;
-  background-image: url("./assets/home.jpg"); 
+  background-image: url("./assets/bg.jpg"); 
   background-size: cover;
   display: flex;
   align-items: center;
@@ -91,7 +91,8 @@ body {
 }
 
 .main-gif {
-  height: 120px;
+  height: 150px;
+  position: relative;
   width: auto;
   image-rendering: pixelated;
 }

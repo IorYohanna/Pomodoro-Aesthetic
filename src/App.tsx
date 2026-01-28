@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from "react";
 import "./App.css";
-import idleGif from "./assets/idle.gif";
+import cutieGif from "./assets/cutie.gif";
 import workGif from "./assets/work.gif";
 import breakGif from "./assets/break.gif";
 import closeBtn from "./assets/close.png";
@@ -16,7 +16,7 @@ function App() {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isBreak, setIsBreak] = useState<boolean>(false);
   const [text, setText] = useState("");
-  const [gifImage, setGifImage] = useState(idleGif);
+  const [gifImage, setGifImage] = useState(cutieGif);
 
   const homeAudio = useRef(new Audio(homeSongFile));
   const breakAudio = useRef(new Audio(breakSongFile));
@@ -77,7 +77,7 @@ function App() {
     setIsBreak(breakMode);
     setIsRunning(false);
     setTimeLeft(breakMode ? BREAK_TIME : WORK_TIME);
-    setGifImage(idleGif);
+    setGifImage(cutieGif);
   };
 
   const toggleTimer = () => {
@@ -86,14 +86,14 @@ function App() {
       setGifImage(isBreak ? breakGif : workGif);
     } else {
       setIsRunning(false);
-      setGifImage(idleGif);
+      setGifImage(cutieGif);
     }
   };
 
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(isBreak ? BREAK_TIME : WORK_TIME);
-    setGifImage(idleGif);
+    setGifImage(cutieGif);
   };
 
   return (
